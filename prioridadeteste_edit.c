@@ -1,126 +1,101 @@
-/* Simulador de Escalonamento de Processos*/
 #include <stdio.h>
+#include <time.h>
 #include <stdlib.h>
-/* Estrutura */
-struct processos {
-    int id;                     /* Identifição do processo*/              
-    int temp;                  /* Tempo de duração do processo*/
-    int prioridade;           
-    int execucao;               /* Tempo de execução do processo*/
-    int espera;                 /* Tempo de espera do processo*/
-    struct processos *prox;
-};
 
-/* Declarações de Protótipo de função */
-struct processos *init_processos (int id, int temp, int prioridade);
-void prioridade (struct processos *proc);
-void listprocs (struct processos *proc);
 
-int main (void) {
+#define N 5             // Quantidade de processos
+#define MAX_TEMPO_PROCESSO 15      // Quantidade maxima de tempo que um processo pode durar
+#define TEMPO_MAX 10    // Quantidade maxima de tempo que cada processo pode executar por vez
+#define PRIORIDADE  10    //PRIORIDADE DO PROCESSO
 
-    struct processos *plist, *ptmp;
-    plist       = init_processos(1, 10, 3);
-    plist->prox = init_processos(2,  1, 1); ptmp = plist->prox;
-    ptmp->prox  = init_processos(3,  2, 3); ptmp = ptmp->prox;
-    ptmp->prox  = init_processos(4,  1, 4); ptmp = ptmp->prox;
-    ptmp->prox  = init_processos(5,  5, 2);
-    /* Simulações executadas*/
-    listprocs(plist);
-    prioridade(plist);
+int pTempo[N];    // Lista de tempo para execucao de cada processo
+int pID[N]; 
+int pPrioridade[N];     // Lista de ID dos processos 
+int tam = 0;        // Tamanho lista de processos
 
-    while (plist != NULL) {
-        ptmp = plist;
-        plist = plist->prox;
-        free(ptmp);
-    };
-    return(0);
-};
-/* Inicialização de entrada da lista de processos*/
-struct processos *init_processos (int id, int temp, int prioridade) {
-    struct processos *proc;
-    proc = (struct processos*)malloc(sizeof(struct processos)); 
-    if (proc == NULL) {
-        printf("Erro Fatal: Falha Alocacao de memoria.\nFinalizar.\n");
-        exit(1);
-    };
-    proc->id = id;
-    proc->temp = temp;
-    proc->prioridade = prioridade;
-    proc->execucao = 0;
-    proc->espera = 0;
-    proc->prox = NULL;
-    return(proc);
-};
+// Cria processos
+void criarProcesso (int aux) {
+        tam++;
+        pTempo[aux] = rand()%MAX_TEMPO_PROCESSO + 1;
+        pPrioridade[aux] = rand()%PRIORIDADE + 1;
+        pID[aux] = aux;
+        printf("Processo %d criado com prioridade %d. Tempo requerido para execucao: %ds. \n\n", pID[aux],pPrioridade[aux], pTempo[aux]); 
+}
 
-/* Listando Processos */
-void listprocs (struct processos *proc) {
-  struct processos *tmp = proc;
-  printf("Processos criados com suas prioridades e tempos de execucao \n");
-  printf("\n");
-  while (tmp != NULL) {
-    printf("Processo: %d\tPrioridade: %d\ttemp: %d\n", tmp->id, tmp->prioridade, tmp->temp);
-    tmp = tmp->prox;
-  };
-  printf("\n\n");
- };
-/* Simulação de Processos por Prioridade
- * Obs: O processo de menor valor de prioridade obtem
- * prioridade maior na fila de processos */
-void prioridade (struct processos *proc) {
-  int tempo, inicio, fim, maior;
-  struct processos *copia, *tmpsrc, *tmp, *maiorprimeiro;
-  printf("Escalonamento por Prioridade\n");
-   printf("\n");
+//EXCLUI PROCESSOS CASO ELES TENHAM SIDO CONCLUIDOS
+void excluirProcesso(int id){
+    for(int i = id; i<tam; i++){
+	pTempo[i] = pTempo[i+1];
+	pID[i] = pID[i+1];
+    }
+    pTempo[tam-1] = 0;
+}
 
-     /* Replicando Lista de Processos */
-  tmpsrc = proc;
-  copia = tmp = NULL;
-  while (tmpsrc != NULL) {
-    if (copia == NULL) {
-    copia = init_processos(tmpsrc->id, tmpsrc->temp, tmpsrc->prioridade);
-    tmp = copia;
-    } else {
-    tmp->prox = init_processos(tmpsrc->id, tmpsrc->temp, tmpsrc->prioridade);
-    tmp = tmp->prox;
-    };
-    tmpsrc = tmpsrc->prox;
-  };
-  /* Programa Principal */
-  tempo = 0;
-  while (copia != NULL) {
+//ORGANIZA A LISTA DE PROCESSOS POR PRIORIDADE
+void organizarPrioridade(){
+    int aux1, aux2, aux3; 
+    for(int i=0;i<N;i++){
+    	for(int j=0; j<N;j++){
+	    if(pPrioridade[i] > pPrioridade[j]){
+	    	aux1 = pTempo[i]; aux2 = pPrioridade[i]; aux3 = pID[i];
+	    	pTempo[i] = pTempo[j];
+        	pPrioridade[i] = pPrioridade[j];
+         	pID[i] = pID[j];
+         	
+         	pTempo[j] = aux1;
+        	pPrioridade[j] = aux2;
+         	pID[j] = aux3;
+    	    }
+    	}
+    }
+}
+//RODA PROCESSOS
+void executarProcesso(int id) {
+    int processTime = pTempo[id];
+    
+    printf("Processo %d usara a CPU por %ds.\n",  pID[id], processTime);
+    	printf("\n-- Rodando...\n");
+        sleep(1);
+    	pTempo[id] = 0;   
+}
 
-          /* Localiza o proximo processo */
-    maiorprimeiro = NULL;
-    maior = copia->prioridade;
-    tmp = copia->prox;
-    tmpsrc = copia;
-    while (tmp != NULL) {
-    if (tmp->prioridade < maior) {
-      maior = tmp->prioridade;
-      maiorprimeiro = tmpsrc;
-    };
-    tmpsrc = tmp;
-    tmp = tmp->prox;
-    };
-     if (maiorprimeiro == NULL) {
-    /* Verifica se o primeiro processo possui maior prioridade */
-    inicio = tempo;
-    tempo += copia->temp;
-    fim = tempo;
-    printf("Processo: %d\ttemp: %d\tEspera: %d\tRetorno: %d\n", copia->id, tempo, inicio, fim);
-    tmpsrc = copia->prox;
-    free(copia);
-    copia = tmpsrc;
-    } else {
-    /* Verifica se o primeiro processo não possui maior prioridade */
-    tmp = maiorprimeiro->prox;
-    inicio = tempo;
-    tempo += tmp->temp;
-    fim = tempo;
-    printf("Processo: %d\ttemp: %d \tEspera: %d\tRetorno: %d\n", tmp->id, tempo, inicio, fim);
-    maiorprimeiro->prox = tmp->prox;
-    free(tmp);
-    };
-  };
-  printf("\n\n");
-};
+int main(){
+    int tempo_de_execucao = TEMPO_MAX;
+    srand(time(NULL));
+    
+    // GERA PROCESSOS
+    for(int i = 0; i < N ; i ++) {
+        criarProcesso(i);
+    }
+    
+    organizarPrioridade();
+    
+    printf("Lista de processos organizada por prioridade:\n");
+    for(int i = 0; i < N ; i ++) {
+        printf("Processo %d - Prioridade %d\n", pID[i], pPrioridade[i]);
+    }
+    
+    
+    int i = 0;
+    //WHILE RODA ATE QUE NAO HAJAM MAIS PROCESSOS
+    while(tam!=0){
+        if (i>= tam){
+    	    i = 0;
+    	}
+  
+    	//RODA PROCESSO
+    	executarProcesso(i);
+        
+        //ENCERRA PROCESSO APOS RODAR
+    	if(pTempo[i]==0){
+    	    printf("----------------------\n|Processo %d Finalizou|\n----------------------\n\n", pID[i]);
+    	    excluirProcesso(i);
+    	    tam = tam - 1;   	
+    	}
+    	i++;
+    	
+    }
+    
+    return 0;
+}
+    
