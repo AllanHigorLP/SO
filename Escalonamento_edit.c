@@ -1,28 +1,20 @@
 #include <stdio.h>
 #include <time.h>
-#include <stdbool.h>
 #include <stdlib.h>
 
-#define MAX 10 
-#define MAX_RNG 20
-#define TEMPO_MAX 10
+#define N 5             // Quantidade de processos
+#define MAX_TEMPO_PROCESSO 15      // Quantidade maxima de tempo que um processo pode durar
+#define TEMPO_MAX 10    // Quantidade maxima de tempo que cada processo pode executar por vez
 
-int pTempo[MAX]; // Lista de tempo para execucao de cada processo
-char pID[MAX]; // Lista de ID dos processos 
-int tam = 0; // Tamanho lista de processos
-
-
-// Gerador de números aleatórios
-int rng (int range) {
-    return rand()%range + 1;
-}
+int pTempo[N];    // Lista de tempo para execucao de cada processo
+char pID[N];      // Lista de ID dos processos 
+int tam = 0;        // Tamanho lista de processos
 
 // Cria processos
 void criarProcesso (int aux) {
-        tam ++;
-        pTempo[aux] = rng(MAX_RNG);
+        tam++;
+        pTempo[aux] = rand()%MAX_TEMPO_PROCESSO + 1;
         pID[aux] = aux;
-        
         printf("Processo %d criado. Tempo requerido para execucao: %ds. \n\n", pID[aux], pTempo[aux]); 
 }
 
@@ -60,20 +52,18 @@ void executarProcesso(int id, int tempo_de_execucao) {
     	pTempo[id] = pTempo[id] - time;
     	printf("Processo %d usara a CPU por %ds.\n",  pID[id], time);
         printf("\n-- Rodando...\n");
-        sleep(1);
-        printf("-- Ainda faltam %ds.\n-- Processo %d uspenso pelo escalonador.\n\n", pTempo[id],  pID[id]);
+        sleep(2);
+        printf("-- Ainda faltam %ds.\n-- Processo %d suspenso pelo escalonador.\n\n", pTempo[id],  pID[id]);
     
     }   
 }
-
-
 
 int main(){
     int tempo_de_execucao = 0;
     srand(time(NULL));
     
     // GERA PROCESSOS
-    for(int i = 0; i < MAX ; i ++) {
+    for(int i = 0; i < N ; i ++) {
         criarProcesso(i);
     }
    
@@ -85,13 +75,13 @@ int main(){
     	}
     	
     	//PRINTA PROCESSOS ATIVOS  	
-    	printf("\nprocessos ainda ativos:");
+    	printf("\nProcessos ainda ativos:");
     	for(int m= 0; m<tam; m++){
     	    printf("%d  ", pID[m]);
     	} 
 
     	//CALCULA O TEMPO DE EXECUCAO DE CADA PROCESSO COM BASE
-    	//NOS PROCESSOS ATIVOS E NO MAX DE TEMPO PERMITIDO
+    	//NOS PROCESSOS ATIVOS E NO N DE TEMPO PERMITIDO
     	tempo_de_execucao = (int) TEMPO_MAX / tam;
     	printf("\nTEMPO DE EXECUCAO DEFINIDO:%ds \n\n",tempo_de_execucao );
     	
@@ -106,7 +96,7 @@ int main(){
     	    tam = tam - 1;
     	    	
     	}
-    	i ++;
+    	i++;
     	
     }
     
