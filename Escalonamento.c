@@ -2,13 +2,13 @@
 #include <time.h>
 #include <stdlib.h>
 
-#define N 5             // Quantidade de processos
-#define MAX_TEMPO_PROCESSO 15      // Quantidade maxima de tempo que um processo pode durar
-#define TEMPO_MAX 10    // Quantidade maxima de tempo que cada processo pode executar por vez
+#define N 5            			 // Quantidade de processos
+#define MAX_TEMPO_PROCESSO 15     	 // Quantidade maxima de tempo que um processo pode durar
+#define TEMPO_MAX 10    		// Quantidade maxima de tempo que cada processo pode executar por vez na CPU
 
-int pTempo[N];    // Lista de tempo para execucao de cada processo
-char pID[N];      // Lista de ID dos processos 
-int tam = 0;        // Tamanho lista de processos
+int pTempo[N];    		// Lista de tempo para execucao de cada processo
+char pID[N];      		// Lista de ID dos processos 
+int tam = 0;        		// Tamanho lista de processos
 
 // Cria processos
 void criarProcesso (int aux) {
@@ -34,7 +34,7 @@ void executarProcesso(int id, int tempo_de_execucao) {
     
     
     //CASO O TEMPO DE EXECUCAO NECESSARIO PARA EXECUTAR O PROCESSO
-    //SEJA MENOR QUE O TEMPO DISPONIBILIZADO PELO ESCALONADOR
+    //SEJA *MENOR* QUE O TEMPO DISPONIBILIZADO PELO ESCALONADOR
     //O PROCESSO RODA PELO TEMPO QUE PRECISA SOMENTE
     if(time>pTempo[id]){
     	printf("Processo %d usara a CPU por %ds.\n",  pID[id], processTime);
@@ -45,10 +45,9 @@ void executarProcesso(int id, int tempo_de_execucao) {
     }   
     
     //CASO O TEMPO NECESSARIO PARA EXECUTAR O PROCESSO
-    //SEJA MAIOR QUE O TEMPO DISPONIBILIZADO PELO ESCALONADOR
+    //SEJA *MAIOR* QUE O TEMPO DISPONIBILIZADO PELO ESCALONADOR
     //O PROCESSO RODA SOMENTE O TEMPO QUE O ESCALONADOR PERMITIU
     else{
-    	
     	pTempo[id] = pTempo[id] - time;
     	printf("Processo %d usara a CPU por %ds.\n",  pID[id], time);
         printf("\n-- Rodando...\n");
@@ -88,8 +87,7 @@ int main(){
     	//RODA PROCESSO
     	executarProcesso(i,tempo_de_execucao);
         
-        //ENCERRA PROCESSO CASO O TEMPO DE EXECUCAO RESTANTE
-        //SEJA IGUALA ZERO
+        //ENCERRA PROCESSO CASO O TEMPO DE EXECUCAO RESTANTE SEJA IGUALA ZERO
     	if(pTempo[i]==0){
     	    printf("----------------------\n|Processo %d Finalizou|\n----------------------\n", pID[i]);
     	    excluirProcesso(i);
