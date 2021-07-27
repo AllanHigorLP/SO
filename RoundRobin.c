@@ -9,13 +9,13 @@
 //PARA FAZER O CONTROLE DE QUANTO TEMPO CADA PROCESSO TERA ACESSO A CPU
 
 
-#define N 5             // Quantidade de processos
-#define MAX_TEMPO_PROCESSO 15      // Quantidade maxima de tempo que um processo pode durar
-#define TEMPO_MAX 10    // Quantidade maxima de tempo que cada processo pode executar por vez
+#define N 5             		// Quantidade de processos
+#define MAX_TEMPO_PROCESSO 15     	// Quantidade maxima de tempo que um processo pode durar
+#define TEMPO_MAX 10    		// Quantidade maxima de tempo que cada processo pode executar por vez
 
-int pTempo[N];    // Lista de tempo para execucao de cada processo
-char pID[N];      // Lista de ID dos processos 
-int tam = 0;        // Tamanho lista de processos
+int pTempo[N];    			// Lista de tempo para execucao de cada processo
+char pID[N];      			// Lista de ID dos processos 
+int tam = 0;        			// Tamanho lista de processos
 
 // Cria processos
 void criarProcesso (int aux) {
@@ -86,9 +86,6 @@ int main(){
     	for(int m= 0; m<tam; m++){
     	    printf("%d  ", pID[m]);
     	} 
-
-    	//CALCULA O TEMPO DE EXECUCAO DE CADA PROCESSO COM BASE
-    	//NOS PROCESSOS ATIVOS E NO N DE TEMPO PERMITIDO
     	
     	printf("\nTEMPO DE EXECUCAO DEFINIDO:%ds \n\n",tempo_de_execucao );
     	
