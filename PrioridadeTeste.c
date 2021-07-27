@@ -3,15 +3,15 @@
 #include <stdlib.h>
 
 
-#define N 5             // Quantidade de processos
-#define MAX_TEMPO_PROCESSO 15      // Quantidade maxima de tempo que um processo pode durar
-#define TEMPO_MAX 10    // Quantidade maxima de tempo que cada processo pode executar por vez
-#define PRIORIDADE  10    //PRIORIDADE DO PROCESSO
+#define N 5             		// Quantidade de processos
+#define MAX_TEMPO_PROCESSO 15     	// Quantidade maxima de tempo que um processo pode durar
+#define TEMPO_MAX 10    		// Quantidade maxima de tempo que cada processo pode executar por vez
+#define PRIORIDADE  10    		//PRIORIDADE DO PROCESSO
 
-int pTempo[N];    // Lista de tempo para execucao de cada processo
-int pID[N]; 
-int pPrioridade[N];     // Lista de ID dos processos 
-int tam = 0;        // Tamanho lista de processos
+int pTempo[N];    			// Lista de tempo para execucao de cada processo
+int pID[N]; 				// Lista de ID dos processos
+int pPrioridade[N];     		// Lista de Prioridade dos processos 
+int tam = 0;        			// Tamanho lista de processos
 
 // Cria processos
 void criarProcesso (int aux) {
@@ -67,16 +67,18 @@ int main(){
     for(int i = 0; i < N ; i ++) {
         criarProcesso(i);
     }
-    
+	
+    //organiza os processos por prioridade
     organizarPrioridade();
-    
+	
+    //printa a lista de processos organizada por prioridade
     printf("Lista de processos organizada por prioridade:\n");
     for(int i = 0; i < N ; i ++) {
         printf("Processo %d - Prioridade %d\n", pID[i], pPrioridade[i]);
     }
     
-    
     int i = 0;
+
     //WHILE RODA ATE QUE NAO HAJAM MAIS PROCESSOS
     while(tam!=0){
         if (i>= tam){
